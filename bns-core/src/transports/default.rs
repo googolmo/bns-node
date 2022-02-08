@@ -77,6 +77,7 @@ impl IceTransport<TkChannel> for DefaultTransport {
             }
             Err(e) => Err(anyhow!(e)),
         }?;
+        self.setup_callback().await?;
         self.setup_channel("bns").await?;
         self.setup_offer().await
     }

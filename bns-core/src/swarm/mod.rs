@@ -47,7 +47,7 @@ impl Swarm {
     pub async fn new_transport(&mut self) -> Result<Arc<Transport>> {
         let mut ice_transport = Transport::new(Arc::clone(&self.signaler));
         ice_transport.start(self.stun_server.to_owned()).await?;
-        ice_transport.setup_callback().await?;
+//        ice_transport.setup_callback().await?;
         // should always has offer here #WhyUnwarp
         let trans = Arc::new(ice_transport);
         Ok(Arc::clone(&trans))
