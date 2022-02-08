@@ -62,6 +62,7 @@ impl IceTransport<TkChannel> for DefaultTransport {
                 urls: vec![stun_addr.to_owned()],
                 ..Default::default()
             }],
+            ice_candidate_pool_size: 10,
             ..Default::default()
         };
         let api = APIBuilder::new().build();
@@ -304,9 +305,9 @@ impl IceTransportCallback<TkChannel> for DefaultTransport {
         box move |c: Option<<Self as IceTransport<TkChannel>>::Candidate>| {
             let peer_connection = peer_connection.to_owned();
             let pending_candidates = pending_candidates.to_owned();
+            log::debug!("start answer candidate: {:?}", c);
             Box::pin(async move {
                 if let Some(candidate) = c {
-                    log::debug!("start answer candidate: {:?}", candidate);
                     let desc = peer_connection.remote_description().await;
                     if desc.is_none() {
                         let mut candidates = pending_candidates;
