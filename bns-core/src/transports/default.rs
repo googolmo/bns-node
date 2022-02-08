@@ -23,6 +23,7 @@ use webrtc::peer_connection::math_rand_alpha;
 use webrtc::peer_connection::peer_connection_state::RTCPeerConnectionState;
 use webrtc::peer_connection::sdp::session_description::RTCSessionDescription;
 use webrtc::peer_connection::RTCPeerConnection;
+use webrtc::api::setting_engine::SettingEngine;
 
 #[derive(Clone)]
 pub struct DefaultTransport {
@@ -57,6 +58,7 @@ impl IceTransport<TkChannel> for DefaultTransport {
     }
 
     async fn start(&mut self, stun_addr: String) -> Result<()> {
+        let setting = SettingEngine::default();
         let config = RTCConfiguration {
             ice_servers: vec![RTCIceServer {
                 urls: vec![stun_addr.to_owned()],
@@ -65,7 +67,8 @@ impl IceTransport<TkChannel> for DefaultTransport {
             ice_candidate_pool_size: 10,
             ..Default::default()
         };
-        let api = APIBuilder::new().build();
+        let api = APIBuilder::new()
+            .with_setting_engine(setting).build();
         match api.new_peer_connection(config).await {
             Ok(c) => {
                 let mut conn = self.connection.lock().await;
