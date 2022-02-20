@@ -3,6 +3,7 @@
 
 pub mod channels;
 pub mod encoder;
+pub mod hashring;
 pub mod signing;
 pub mod storage;
 pub mod swarm;

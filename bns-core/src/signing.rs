@@ -6,6 +6,7 @@ use libsecp256k1::recover;
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
 use serde::Serialize;
+use std::clone::Clone;
 use std::convert::TryFrom;
 use std::ops::Deref;
 use web3::signing::keccak256;
@@ -83,7 +84,7 @@ impl PublicKey {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct SigMsg<T> {
     pub data: T,
     pub addr: Address,

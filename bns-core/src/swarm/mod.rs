@@ -12,6 +12,7 @@ use crate::channels::wasm::CbChannel as Channel;
 #[cfg(feature = "wasm")]
 use crate::transports::wasm::WasmTransport as Transport;
 
+use crate::hashring::HashRing;
 use anyhow::anyhow;
 use anyhow::Result;
 use dashmap::DashMap;
@@ -28,6 +29,7 @@ pub struct Swarm {
     pub anonymous: DashMap<String, Arc<Transport>>,
     pub table: DashMap<String, Arc<Transport>>,
     pub signaler: Arc<Channel>,
+    pub rings: HashRing,
     pub stun_server: String,
 }
 
@@ -37,6 +39,7 @@ impl Swarm {
             pending: None,
             anonymous: DashMap::new(),
             table: DashMap::new(),
+            rings: HashRing::new(),
             signaler: Arc::clone(&ch),
             stun_server: stun,
         }

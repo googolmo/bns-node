@@ -104,8 +104,14 @@ impl IceTransport<AcChannel> for DefaultTransport {
             Some(peer_connection) => {
                 // wait gather candidates
                 let mut gather_complete = peer_connection.gathering_complete_promise().await;
-                let answer = peer_connection.create_answer(None).await?;
-                self.set_local_description(answer.to_owned()).await?;
+                let answer = match peer_connection.local_description().await {
+                    Some(answer) => answer,
+                    None => {
+                        let answer = peer_connection.create_answer(None).await?;
+                        self.set_local_description(answer.to_owned()).await?;
+                        answer
+                    }
+                };
                 let _ = gather_complete.recv().await;
                 Ok(answer)
             }
