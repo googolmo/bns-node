@@ -59,7 +59,7 @@ impl KBucket {
     }
 
     /// Removes `candidate` from the bucket.
-    pub fn remove_node(&mut self, candidate: &Candidate) -> Option<Candidate> {
+    pub fn remove_candidate(&mut self, candidate: &Candidate) -> Option<Candidate> {
         if let Some(index) = self.candidates.iter().position(|c| c == candidate) {
             Some(self.candidates.remove(index))
         } else {
@@ -120,7 +120,7 @@ impl KTable {
         }
     }
 
-    /// Returns the closest `count` nodes to `address`.
+    /// Returns the closest `count` candidates to `address`.
     pub fn get_closest_candidate(&self, address: &Address, count: usize) -> Vec<Candidate> {
         let index = cmp::min(
             self.candidate.id.xor(address).leading_zeros(),
@@ -160,7 +160,7 @@ impl KTable {
             self.candidate.id.xor(&candidate.id).leading_zeros(),
             self.buckets.len() - 1,
         );
-        self.buckets[index].remove_node(candidate);
+        self.buckets[index].remove_candidate(candidate);
     }
 
     pub fn get_stale_indexes(&self) -> Vec<usize> {

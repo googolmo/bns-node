@@ -1,3 +1,4 @@
+use crate::types::dht::DHTRoute;
 /// Swarm is transport management
 ///
 use crate::types::ice_transport::IceTransport;
@@ -16,6 +17,7 @@ use anyhow::anyhow;
 use anyhow::Result;
 use dashmap::DashMap;
 use std::sync::Arc;
+use std::sync::Mutex;
 
 pub enum State {
     Anonymous,
@@ -27,6 +29,7 @@ pub struct Swarm {
     pub pending: Option<Arc<Transport>>,
     pub anonymous: DashMap<String, Arc<Transport>>,
     pub table: DashMap<String, Arc<Transport>>,
+    pub routing: Arc<Mutex<Box<dyn DHTRoute>>>,
     pub signaler: Arc<Channel>,
     pub stun_server: String,
 }
@@ -37,6 +40,7 @@ impl Swarm {
             pending: None,
             anonymous: DashMap::new(),
             table: DashMap::new(),
+            routing: Arc::new(Mutex::new()),
             signaler: Arc::clone(&ch),
             stun_server: stun,
         }
