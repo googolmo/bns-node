@@ -1,4 +1,3 @@
-use crate::types::dht::DHTRoute;
 /// Swarm is transport management
 ///
 use crate::types::ice_transport::IceTransport;
@@ -13,6 +12,8 @@ use crate::channels::wasm::CbChannel as Channel;
 #[cfg(feature = "wasm")]
 use crate::transports::wasm::WasmTransport as Transport;
 
+/// abstract trait obj later
+use crate::route::kadelima::RouteTable;
 use anyhow::anyhow;
 use anyhow::Result;
 use dashmap::DashMap;
@@ -29,7 +30,7 @@ pub struct Swarm {
     pub pending: Option<Arc<Transport>>,
     pub anonymous: DashMap<String, Arc<Transport>>,
     pub table: DashMap<String, Arc<Transport>>,
-    pub routing: Arc<Mutex<Box<dyn DHTRoute>>>,
+    pub routing: Arc<Mutex<RouteTable>>,
     pub signaler: Arc<Channel>,
     pub stun_server: String,
 }
@@ -40,7 +41,7 @@ impl Swarm {
             pending: None,
             anonymous: DashMap::new(),
             table: DashMap::new(),
-            routing: Arc::new(Mutex::new()),
+            routing: Arc::new(Mutex::new(RouteTable::new())),
             signaler: Arc::clone(&ch),
             stun_server: stun,
         }
