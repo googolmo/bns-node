@@ -7,64 +7,66 @@ mod payload;
 pub use payload::MessagePayload;
 
 mod msrp;
-pub use msrp::{Msrp, MsrpReport, MsrpSend};
+pub use msrp::{MessageRelay, RelayProtocol};
 
 use crate::routing::Did;
 use serde::Deserialize;
 use serde::Serialize;
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ConnectNode {
     pub id: Did,
     pub handshake_info: String,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct AlreadyConnected;
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
-pub struct ConnectNodeResponse {
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ConnectedNode {
     pub already_connected: bool,
     pub handshake_info: Option<String>,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct FindSuccessor {
     id: Did,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
-pub struct FindSuccessorResponse;
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct FoundSuccessor {
+    id: Did,
+}
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct NotifyPredecessor {
     pub predecessor: Did,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
-pub struct NotifyPredecessorResponse {
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct NotifiedPredecessor {
     pub predecessor: Did,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
-pub struct FindSuccessorAndAddToFinger {
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct FindSuccessorForFix {
     pub successor: Did,
 }
 
-pub struct FindSuccessorAndAddToFingerResponse {
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct FoundSuccessorForFix {
     pub successor: Did,
-    pub finger_idx: u8,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum Message {
-    ConnectNode(MsrpSend, ConnectNode),
-    AlreadyConnected(MsrpReport, AlreadyConnected),
-    ConnectNodeResponse(MsrpReport, ConnectNodeResponse),
-    FindSuccessor(MsrpSend, FindSuccessor),
-    FindSuccessorResponse(MsrpReport, FindSuccessorResponse),
-    FindSuccessorAndAddToFinger(MsrpSend, FindSuccessorAndAddToFinger),
-    FindSuccessorAndAddToFingerResponse(MsrpReport, FindSuccessorAndAddToFinger),
-    NotifyPredecessor(MsrpSend, NotifyPredecessor),
-    NotifyPredecessorResponse(MsrpReport, NotifyPredecessorResponse),
+    ConnectNode(MessageRelay, ConnectNode),
+    AlreadyConnected(MessageRelay, AlreadyConnected),
+    ConnectedNode(MessageRelay, ConnectedNode),
+    FindSuccessor(MessageRelay, FindSuccessor),
+    FoundSuccessor(MessageRelay, FoundSuccessor),
+    FindSuccessorForFix(MessageRelay, FindSuccessorForFix),
+    FoundSuccessorForFix(MessageRelay, FoundSuccessorForFix),
+    NotifyPredecessor(MessageRelay, NotifyPredecessor),
+    NotifiedPredecessor(MessageRelay, NotifiedPredecessor),
 }
